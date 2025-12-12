@@ -29,6 +29,27 @@ This repository contains a curated collection of Claude Code skills that enhance
 
 [View Details](./code-review-assistant/)
 
+### 2. Excalidraw Diagram Generator
+
+**Name**: `excalidraw`
+
+**Description**: Generate architecture diagrams as .excalidraw files from codebase analysis.
+
+**Use Cases**:
+- Create architecture diagrams from code
+- Visualize system components and data flows
+- Generate documentation diagrams
+- Map relationships between services
+
+**Features**:
+- Automatic codebase analysis (any language/framework)
+- Multiple layout patterns (vertical, horizontal, hub-and-spoke)
+- Platform-specific color palettes (AWS, Azure, Kubernetes)
+- Clean 90-degree elbow arrows with proper bindings
+- No prerequisites required
+
+[View Details](./excalidraw/)
+
 ## Installation
 
 ### Method 1: Copy to Claude Skills Directory
