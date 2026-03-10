@@ -2,7 +2,12 @@
 
 const { execFileSync } = require('node:child_process');
 const { join } = require('node:path');
-const nodemailer = require('nodemailer');
+const { createRequire } = require('node:module');
+
+const runtimeRequire = createRequire(
+  join(process.env.DEP_MAIL_RUNTIME_DIR || '/opt/dep-mail-runtime', 'package.json'),
+);
+const nodemailer = runtimeRequire('nodemailer');
 
 function parseArgs(argv) {
   const options = {
@@ -63,7 +68,7 @@ function loadEnv(assetName) {
   const script = join(__dirname, 'mail_asset_env.sh');
   const output = execFileSync('bash', [script, assetName], {
     encoding: 'utf8',
-    env: { ...process.env, NODE_PATH: '/app/node_modules' },
+    env: { ...process.env },
   });
 
   const envMap = {};
