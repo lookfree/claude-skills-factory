@@ -24,6 +24,61 @@ metadata:
 3. 不在对话中索要邮箱密码、授权码、API Key
 4. 如果平台未配置邮件资产，应明确提示管理员先到“凭证管理 -> 邮件凭证”完成配置
 
+如果当前技能目录下存在以下文件，优先使用平台集成方式：
+
+- `runtime/mail-assets.json`
+- `runtime/dep-password-config.json`
+- `scripts/resolve_mail_asset.sh`
+- `scripts/mail_asset_env.sh`
+- `scripts/read_mail.cjs`
+- `scripts/send_mail.cjs`
+
+处理规则：
+
+1. 先查看 `runtime/mail-assets.json`，确认目标邮件资产名称是否存在
+2. 如需读取平台维护的连接参数和凭据，优先执行：
+
+```bash
+bash scripts/resolve_mail_asset.sh <邮件资产名称>
+```
+
+3. 如需导出环境变量形式的连接参数，优先执行：
+
+```bash
+bash scripts/mail_asset_env.sh <邮件资产名称>
+```
+
+4. 不要手工在对话中索要邮箱密码、授权码或 SMTP/IMAP 服务器参数
+
+## 实际执行脚本
+
+如运行环境已接入邮件执行器，优先使用以下脚本：
+
+### 读取 / 搜索邮件
+
+```bash
+node scripts/read_mail.cjs --asset <邮件资产名称> --unread --limit 10
+node scripts/read_mail.cjs --asset <邮件资产名称> --from "boss@example.com" --since 7d --limit 20
+node scripts/read_mail.cjs --asset <邮件资产名称> --uid 12345
+```
+
+说明：
+
+- `--asset`：必填，平台邮件资产名称
+- `--unread`：只看未读
+- `--from`：按发件人过滤
+- `--subject`：按主题关键词过滤
+- `--since`：支持 `7d` 这种最近天数，或 ISO 日期
+- `--uid`：读取单封邮件详情
+
+### 发送邮件
+
+```bash
+node scripts/send_mail.cjs --asset <邮件资产名称> --to "user@example.com" --subject "主题" --text "正文"
+```
+
+如用户未明确要求立即发送，默认先生成草稿，不直接执行发送脚本。
+
 ## 适用场景
 
 - 查看某个邮箱最近的未读邮件
@@ -112,13 +167,14 @@ metadata:
 2. 当前数字员工是否有权限使用该邮件资产
 3. 邮件资产的 IMAP / SMTP 配置是否完整
 4. 邮件凭据是否完整（账号 + 密码/授权码）
-5. 运行环境是否已接入实际邮件执行器
+5. 运行环境是否已接入实际邮件执行器（`imapflow` / `nodemailer`）
 
-如果当前系统只完成了邮件资产和凭据管理，但尚未接入实际执行器，应明确说明：
+如果脚本执行失败，应明确说明是哪一步失败：
 
-- 邮件资产与凭据已可管理
-- 但当前环境尚未接通真实收发执行链路
-- 可以先产出搜索计划、草稿或发送内容模板
+- 邮件资产解析失败
+- IMAP 登录失败
+- SMTP 登录失败
+- 目标邮箱拒收
 
 ## 输出格式
 
