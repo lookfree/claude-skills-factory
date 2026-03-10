@@ -109,7 +109,7 @@ async function collectMessage(client, uid) {
     flags: true,
     internalDate: true,
     source: true,
-  });
+  }, { uid: true });
   if (!message) return null;
 
   const parsed = await simpleParser(message.source);
